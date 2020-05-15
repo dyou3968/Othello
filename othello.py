@@ -5,6 +5,7 @@
 # A pygame recreation of the original othello board game
 # Heavy pygame inspiration taken from:
 # https://github.com/ehmatthes/pcc/tree/master/chapter_14
+# https://www.pygame.org/docs/
 #####################################################################################
 
 import pygame
@@ -24,8 +25,7 @@ def runGame():
     bgColor = (0,153,0)
 
     while True:
-        gf.checkEvents(aiSettings,screen)
         gf.updateScreen(aiSettings,screen)
-
+        pygame.display.update()
 
 runGame()
