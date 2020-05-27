@@ -66,7 +66,6 @@ class Game:
         if self.makeAIMoves and self.board.over:
             # Shows the gameover screen
             self.show_go_screen()
-            #self.board.reset()
         
         updateScreen(self.aiSettings, self.screen, self.board)
         
@@ -110,7 +109,7 @@ class Game:
         if not self.running:
             return
         self.draw_text("Game Over", 48, (150,0,150), self.aiSettings.screenWidth//2, self.aiSettings.screenHeight//3)
-        self.draw_text("Press any key to play again", 22, (150,0,150), self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*3//4)
+        self.draw_text("Press r to play again", 22, (150,0,150), self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*3//4)
         pygame.display.flip()
         self.wait_for_key()
 

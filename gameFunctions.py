@@ -9,7 +9,7 @@ While is represented on the 2dlist with a value of 1
 Black is represented on the 2dlist with a value of -1
 
 """
-#################################################################
+#####################################################################################
 
 import sys
 import pygame
@@ -297,9 +297,9 @@ def drawInfo(aiSettings, screen, board):
     renderCenteredText(screen, board.names[-1] + f": {colors[-1]} tiles", 20, aiSettings.screenWidth - 100, aiSettings.screenHeight - 40, board.colors[-1])
     renderCenteredText(screen, str(board.whiteWins), 20, aiSettings.margin//2, aiSettings.screenHeight//2, (255,255,255))
     renderCenteredText(screen, str(board.blackWins), 20, aiSettings.screenWidth - aiSettings.margin//2, aiSettings.screenHeight//2, (0,0,0))
-    if board.over:
-        renderCenteredText(screen, "Game Over", 40, aiSettings.screenWidth//2, aiSettings.screenHeight//2-20, (150,0,150))
-        renderCenteredText(screen, "Press (r) to reset", 15, aiSettings.screenWidth//2, aiSettings.screenHeight//2+25, (150,0,150))
+    # if board.over:
+    #     renderCenteredText(screen, "Game Over", 40, aiSettings.screenWidth//2, aiSettings.screenHeight//2-20, (150,0,150))
+    #     renderCenteredText(screen, "Press (r) to reset", 15, aiSettings.screenWidth//2, aiSettings.screenHeight//2+25, (150,0,150))
 
 
 # From https://github.com/ehmatthes/pcc/blob/master/chapter_12/game_functions.py
