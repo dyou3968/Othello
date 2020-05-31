@@ -15,7 +15,7 @@ def evaluateState(state, total, alg):
     # algRef refers to the "score" given for each position
     # The first column is the value of the sides of the board
     # The second column is the value of the corners of the board
-    # The third and fourth column is the value of the inner pieces
+    # The third and fourth column deal with reducing positional value over time
     algRef = [[0,  0, 0, 1],
               [5, 30, 0, 1],
               [5, 30, 0, 1],
@@ -23,7 +23,6 @@ def evaluateState(state, total, alg):
               [4, 15, 1, 1],
               [4, 15, 1, 2],
               [4, 15, 1, 0.5]]
-    # Note: why do we need so many difference references? Can't we just have one?
     
     stats = algRef[alg] # Gets the row of data we want to use
     
@@ -53,5 +52,6 @@ def evaluateState(state, total, alg):
     value = 0
     value += (squares[1]*tileValue + positionalValue * (sides[1]*sideValue + corners[1]*cornerValue))
     value -= (squares[-1]*tileValue + positionalValue * (sides[-1]*sideValue + corners[-1]*cornerValue))
-    value += random.random() #I don't understand why we are introducing randomness here
+    #Breaks ties randomly
+    value += random.random()
     return value
