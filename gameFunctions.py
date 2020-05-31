@@ -125,10 +125,14 @@ def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
     if depth <= 0:
         if maximizingPlayer:
             #White's algorithm
-            return evaluateStatePrime(state, total), 0
+            endValue = evaluateStatePrime(state, total), 0
+            print(endValue)
+            return endValue
         else:
             #Black's algorithm
-            return evaluateStatePrime(state, total), 0
+            endValue = evaluateStatePrime(state, total), 0
+            print(endValue)
+            return endValue
     
     elif maximizingPlayer:
         maxEval = -1000000
@@ -148,6 +152,7 @@ def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
             alpha = max(val, alpha)
             if beta <= alpha:
                 break
+        print(maxEval, "AAAAAAAAAAAAAAAAAAA")
         return (maxEval, selectedMove)
 
     else:
