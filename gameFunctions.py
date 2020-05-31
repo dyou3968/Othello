@@ -254,7 +254,6 @@ def drawPiece(aiSettings,screen,color,rectX,rectY):
 def makeAIMove(board):
     if board.turn not in board.controlledColors[board.humanControlled]:
         moves = getValidMoves(board)
-        moves = getValidMoves(self)
         if len(moves) == 0:
             board.turn *= -1
         else:
