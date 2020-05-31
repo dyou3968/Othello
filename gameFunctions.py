@@ -249,13 +249,16 @@ def drawPiece(aiSettings,screen,color,rectX,rectY):
 def makeAIMove(board):
     if board.turn not in board.controlledColors[board.humanControlled]:
         moves = getValidMoves(board)
-    else:
-        if board.turn == 1:
-            nextMove = (minimax(board.state, 3, -1000000, 1000000, True))[1]
-            board.place(nextMove[0], nextMove[1])
+        moves = getValidMoves(self)
+        if len(moves) == 0:
+            board.turn *= -1
         else:
-            nextMove = (minimax(board.state, 3, -1000000, 1000000, False))[1]
-            board.place(nextMove[0], nextMove[1])
+            if board.turn == 1:
+                nextMove = (minimax(board.state, 3, -1000000, 1000000, True))[1]
+                board.place(nextMove[0], nextMove[1])
+            else:
+                nextMove = (minimax(board.state, 3, -1000000, 1000000, False))[1]
+                board.place(nextMove[0], nextMove[1])
 
 def drawGrid(aiSettings, screen, board):
     """Draws the grid for the screen"""
