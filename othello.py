@@ -12,11 +12,12 @@ import pygame, os
 from settings import *
 from gameFunctions import *
 
+pygame.init()
+
 class Game:
     def __init__(self):
         # Initialize pygame, settings, and screen object.
         # Taken from https://github.com/ehmatthes/pcc/blob/master/chapter_14/alien_invasion.py
-        pygame.init()
         self.PGclock = pygame.time.Clock()
 
         self.board = Board()
@@ -30,7 +31,6 @@ class Game:
 
         self.running = True
         self.makeAIMoves = False
-        self.font_name = pygame.font.match_font("Arial")
 
     def update(self):
         for event in pygame.event.get():
@@ -88,19 +88,12 @@ class Game:
                 if event.type == pygame.KEYUP:
                     waiting = False
 
-    def draw_text(self, text, size, color, x, y):
-        # Helper functions to draw text
-        font = pygame.font.Font(self.font_name, size)
-        text_surface = font.render(text, True, color)
-        text_rect = text_surface.get_rect()
-        text_rect.midtop = (x, y)
-        self.screen.blit(text_surface, text_rect)
 
     def show_start_screen(self):
         # Othello start screen
         self.screen.fill(self.bgColor)
-        self.draw_text("Othello", 48, (0,0,0), self.aiSettings.screenWidth//2, self.aiSettings.screenHeight//3)
-        self.draw_text("Press any key to start", 24, (0,0,0), self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*2//3)
+        renderCenteredText(self.screen, "Othello", 48, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight//3, (0,0,0))
+        renderCenteredText(self.screen, "Press any key to start", 24, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*2//3, (0,0,0))
         pygame.display.flip()
         self.wait_for_key()
 
@@ -108,8 +101,8 @@ class Game:
         # Screen when the game is over
         if not self.running:
             return
-        self.draw_text("Game Over", 48, (150,0,150), self.aiSettings.screenWidth//2, self.aiSettings.screenHeight//3)
-        self.draw_text("Press r to play again", 22, (150,0,150), self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*3//4)
+        renderCenteredText(self.screen, "Game Over", 48, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight//3, (150,0,150))
+        renderCenteredText(self.screen, "Press r to play again", 22, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*3//4, (150,0,150))
         pygame.display.flip()
         self.wait_for_key()
 
