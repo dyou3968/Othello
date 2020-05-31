@@ -1,7 +1,5 @@
 #####################################################################################
 # Evaluation states
-
-# Sean, can you write a brief description and add comments to this page? I'm not sure what algRef is 
 #####################################################################################
 
 import random
