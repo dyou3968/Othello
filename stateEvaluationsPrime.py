@@ -7,7 +7,13 @@
 
 import random
 
-def evaluateStatePrime(state, total):
+def evaluateStatePrime(state, piecesPlayed):
+    # State is the board of the game (2d List)
+    # Pieces Played is the number of pieces that have been played on the board
+        # This is not currently used in our program, but it was part of the other algorithm
+        # So we wanted to keep it just in case.
+
+
     # This grid is based off of the reward system in the paper cited above
     # We believe this implementation is best for the minimax algorithm
     squareRewards =[[120, -20, 20,  5,  5, 20, -20, 120],
@@ -28,8 +34,6 @@ def evaluateStatePrime(state, total):
                 whiteTotal += squareRewards[row][col]
             elif state[row][col] == -1: #If the piece on that specific space is black
                 blackTotal += squareRewards[row][col]
-
-    #positionalValue = 1 - stats[2] * (total/64)**stats[3]
 
     value = whiteTotal - blackTotal
     value += random.random() 
