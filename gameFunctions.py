@@ -16,6 +16,7 @@ import pygame
 import copy
 import random
 from stateEvaluations import *
+from stateEvaluationsPrime import *
 
 class Board(object):
     def __init__(self, turn = 1, state = None):
@@ -124,10 +125,10 @@ def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
     if depth <= 0:
         if maximizingPlayer:
             #White's algorithm
-            return evaluateState(state, total, 4), 0
+            return evaluateStatePrime(state, total), 0
         else:
             #Black's algorithm
-            return evaluateState(state, total, 4), 0
+            return evaluateStatePrime(state, total), 0
     
     elif maximizingPlayer:
         maxEval = -1000000
@@ -250,10 +251,10 @@ def makeAIMove(board):
         moves = getValidMoves(board)
         else:
             if board.turn == 1:
-                nextMove = (minimax(board.state, 4, -1000000, 1000000, True))[1]
+                nextMove = (minimax(board.state, 3, -1000000, 1000000, True))[1]
                 board.place(nextMove[0], nextMove[1])
             else:
-                nextMove = (minimax(board.state, 4, -1000000, 1000000, False))[1]
+                nextMove = (minimax(board.state, 3, -1000000, 1000000, False))[1]
                 board.place(nextMove[0], nextMove[1])
 
 def drawGrid(aiSettings, screen, board):
