@@ -87,6 +87,8 @@ class Game:
                     self.running = False
                 if event.type == pygame.KEYUP:
                     waiting = False
+                    if event.key == pygame.K_r:
+                        self.board.reset()
 
 
     def show_start_screen(self):
