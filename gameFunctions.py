@@ -61,7 +61,6 @@ class Board(object):
                     self.blackWins += 1
                 return
         self.turn *= -1
-        total = 0
 
     def reset(self):
         self.state = [[0] * 8 for i in range(8)]
@@ -249,8 +248,6 @@ def drawPiece(aiSettings,screen,color,rectX,rectY):
 def makeAIMove(board):
     if board.turn not in board.controlledColors[board.humanControlled]:
         moves = getValidMoves(board)
-        if len(moves) == 0:
-            board.turn *= -1
         else:
             if board.turn == 1:
                 nextMove = (minimax(board.state, 4, -1000000, 1000000, True))[1]
