@@ -35,7 +35,7 @@ class Game:
     def update(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouseX,mouseY = pygame.mouse.get_pos()
                 (row,col) = viewToModel(self.aiSettings,mouseX,mouseY)
