@@ -20,10 +20,10 @@ class Game:
         # Taken from https://github.com/ehmatthes/pcc/blob/master/chapter_14/alien_invasion.py
         self.PGclock = pygame.time.Clock()
 
-        self.board = Board()
         self.aiSettings = Settings()
         self.screen = pygame.display.set_mode(
             (self.aiSettings.screenWidth, self.aiSettings.screenHeight))
+        self.board = Board()
         pygame.display.set_caption("Othello")
 
         # Set the background color.
@@ -41,7 +41,7 @@ class Game:
                 (row,col) = viewToModel(self.aiSettings,mouseX,mouseY)
                 if (row in range(8) and col in range(8)):
                     if self.board.place(row, col):
-                        pass
+                        updateScreen(self.aiSettings, self.screen, self.board)
                         #nextMove = (minimax(board.state, 4, -1000000, 1000000, (True if board.turn == 1 else False)))
                         #print(nextMove)
             if event.type == pygame.KEYDOWN:
@@ -63,7 +63,8 @@ class Game:
 
         if self.makeAIMoves and not self.board.over:
             makeAIMove(self.board)
-        if self.makeAIMoves and self.board.over:
+            updateScreen(self.aiSettings, self.screen, self.board)
+        if self.board.over:
             # Shows the gameover screen
             self.show_go_screen()
         
