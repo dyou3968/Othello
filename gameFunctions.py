@@ -124,56 +124,30 @@ def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
             return 0, 0
 
     if depth <= 0:
-        if maximizingPlayer:
-            #White's algorithm
-            endValue = evaluateStatePrime(state, total), 0
-            #print(endValue)
-            return endValue
-        else:
-            #Black's algorithm
-            endValue = evaluateStatePrime(state, total), 0
-            #print(endValue)
-            return endValue
+        if maximizingPlayer: #White's algorithm
+            return evaluateStatePrime(state, total), 0
+        else: #Black's algorithm
+            return evaluateStatePrime(state, total), 0
     
-    elif maximizingPlayer:
-        maxEval = -1000000
-        selectedMove = None
-        newBoard = Board(state = copy.deepcopy(state), turn = 1)
-        result = getValidMoves(newBoard)
-        if len(result) == 0:
-            return minimax(newBoard.state, depth - 1, alpha, beta, False, total)
-        for move in result:
-            copyBoard = Board(state = copy.deepcopy(newBoard.state), turn = 1)
-            copyBoard.place(move[0], move[1])
-            #print((5 - depth) * "    " + str(move))
-            val = minimax(copyBoard.state, depth - 1, alpha, beta, False, total = total + 1)[0]
-            if val > maxEval:
-                maxEval = val
-                selectedMove = move 
-            alpha = max(val, alpha)
-            if beta <= alpha:
-                break
-        return (maxEval, selectedMove)
-
-    else:
-        minEval = 1000000
-        selectedMove = None
-        newBoard = Board(state = copy.deepcopy(state), turn = -1)
-        result = getValidMoves(newBoard)
-        if len(result) == 0:
-            return minimax(newBoard.state, depth - 1, alpha, beta, True, total)
-        for move in result:
-            copyBoard = Board(state = copy.deepcopy(newBoard.state), turn = -1)
-            copyBoard.place(move[0], move[1])
-            #print((5 - depth) * "    " + str(move))
-            val = minimax(copyBoard.state, depth - 1, alpha, beta, True, total = total + 1)[0]
-            if val < minEval:
-                minEval = val
-                selectedMove = move
-            beta = min(beta, val)
-            if beta <= alpha:
-                break
-        return (minEval, selectedMove)
+    turn = (1 if maximizingPlayer else -1)
+    Eval = -1000000 * turn
+    selectedMove = None
+    newBoard = Board(state = copy.deepcopy(state), turn = turn)
+    result = getValidMoves(newBoard)
+    if len(result) == 0:
+        return minimax(newBoard.state, depth - 1, alpha, beta, (not maximizingPlayer), total)
+    for move in result:
+        copyBoard = Board(state = copy.deepcopy(newBoard.state), turn = turn)
+        copyBoard.place(move[0], move[1])
+        val = minimax(copyBoard.state, depth - 1, alpha, beta, not maximizingPlayer, total = total + 1)[0]
+        if (maximizingPlayer and (val > Eval)) or ((not maximizingPlayer) and (val < Eval)):
+            Eval = val
+            selectedMove = move
+        if turn == 1: alpha = max(val, alpha)
+        else: beta = min(beta, val)
+        if beta <= alpha:
+            break
+    return (Eval, selectedMove)
 
 #####################################################################################
 
