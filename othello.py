@@ -43,8 +43,6 @@ class Game:
                 if (row in range(8) and col in range(8)):
                     if self.board.place(row, col):
                         updateScreen(self.aiSettings, self.screen, self.board)
-                        #nextMove = (minimax(board.state, 4, -1000000, 1000000, (True if board.turn == 1 else False)))
-                        #print(nextMove)
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     self.board.reset()
