@@ -89,7 +89,6 @@ class Game:
                     if event.key == pygame.K_r:
                         self.board.reset()
 
-
     def show_start_screen(self):
         # Othello start screen
         self.screen.fill(self.bgColor)
@@ -110,10 +109,89 @@ class Game:
 
 #####################################################################################
 
+
+#####################################################################################
+# This is the intro screen where the player chooses from the following three options
+
+# Human Vs. Human
+# Human Vs. AI
+# AI Vs. AI
+
+# There is also a screen that goes to the "how to play" screen
+#####################################################################################
+
+    def show_intro_screen(self):
+        # Othello start screen
+        self.screen.fill(self.bgColor)
+        text1 = 'Human'
+        text2 = 'AI '
+        spacing = 50
+        fontSize = 36
+        startWidth = self.aiSettings.screenWidth//6
+        startHeight = self.aiSettings.screenHeight*2//5
+        boxWidth = fontSize*4
+        boxHeight = fontSize*4 #The pixel height is always one more than the font size. Since we have three lines here, it has three extra
+        thickness = 2
+
+        # Leftmost human vs. human 
+        self.generateText(startWidth, startHeight, text1, text1, spacing, fontSize)
+        self.generateTextBox(startWidth, startHeight + spacing//3, boxWidth, boxHeight, thickness)
+
+         # Middle human vs. AI
+        self.generateText(startWidth*3, startHeight, text1, text2, spacing, fontSize)
+        self.generateTextBox(startWidth*3, startHeight + spacing//3, boxWidth, boxHeight, thickness)
+
+         # Rightmost AI vs. AI
+        self.generateText(startWidth*5, startHeight, text2, text2, spacing, fontSize)
+        self.generateTextBox(startWidth*5, startHeight + spacing//3, boxWidth, boxHeight, thickness)
+
+        # How to play text and textbox
+        renderCenteredText(self.screen, "How to Play", fontSize, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*8//10, (0,0,0))
+        howToPlayWidth = self.textSize("How to Play", fontSize)[0] + spacing
+        howToPlayHeight = self.textSize("How to Play", fontSize)[1] + spacing
+        self.generateTextBox(self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*8//10 + spacing//3, howToPlayWidth, howToPlayHeight, thickness)
+        #print(self.textSize("How to Play", fontSize))
+        
+        pygame.display.flip()
+        self.wait_for_key()
+
+    def textSize(self, text, size):
+        # Returns the width and height of the text
+        font = pygame.font.Font('freesansbold.ttf', size)
+        return font.size(text)
+
+    def generateText(self, startX, startY, line1, line3, spacing, font):
+        # Generates the three lines of text given the input and the spacing
+        renderCenteredText(self.screen, line1, font, startX, startY - spacing, (0,0,0))
+        renderCenteredText(self.screen, 'Vs.', font, startX, startY, (0,0,0))
+        renderCenteredText(self.screen, line3, font, startX, startY + spacing, (0,0,0))
+
+    def generateTextBox(self, centerX, centerY, boxWidth, boxHeight, thickness):
+        # Generates the textbox around the lines of text
+        leftSide = centerX - boxWidth//2
+        topSide = centerY - boxHeight//2
+        rect = pygame.Rect(leftSide,topSide,boxWidth,boxHeight)
+        pygame.draw.rect(self.screen, (0,0,0), rect, thickness)
+
+
+
+
+#####################################################################################
+
 g = Game()
-g.show_start_screen()
+g.show_intro_screen()
 while g.running:
     g.update()
 
 pygame.quit()
 os._exit(0)
+
+
+# g = Game()
+# #g.show_start_screen()
+# g.show_intro_screen()
+# while g.running:
+#     g.update()
+
+# pygame.quit()
+# os._exit(0)
