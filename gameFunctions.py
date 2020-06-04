@@ -57,6 +57,7 @@ class Board(object):
             if len(moves) == 0:
                 self.over = True
                 totals = self.getDist()
+                
                 if totals[1] > totals[-1]:
                     self.whiteWins += 1
                 elif totals[1] < totals[-1]:
