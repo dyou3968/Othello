@@ -37,7 +37,6 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                print(self.board.state)
                 mouseX,mouseY = pygame.mouse.get_pos()
                 (row,col) = viewToModel(self.aiSettings,mouseX,mouseY)
                 if (row in range(8) and col in range(8)):
@@ -89,6 +88,7 @@ class Game:
                     waiting = False
                     if event.key == pygame.K_r:
                         self.board.reset()
+
 
     def show_start_screen(self):
         # Othello start screen
