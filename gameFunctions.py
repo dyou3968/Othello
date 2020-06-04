@@ -49,6 +49,7 @@ class Board(object):
     
     #Checks for game overs and double moves
     def checkGameOver(self):
+        self.turn *= -1
         moves = getValidMoves(self)
         if len(moves) == 0:
             self.turn *= -1
@@ -61,7 +62,6 @@ class Board(object):
                 elif totals[1] < totals[-1]:
                     self.blackWins += 1
                 return
-        self.turn *= -1
 
     def reset(self):
         self.state = [[0] * 8 for i in range(8)]
