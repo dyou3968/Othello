@@ -17,6 +17,7 @@ import copy
 import random
 from stateEvaluations import *
 from stateEvaluationsPrime import *
+from time import time
 
 class Board(object):
     def __init__(self, turn = 1, state = None):
@@ -103,6 +104,38 @@ know will not be checked. The video gives a good example of this process.
 """
 #####################################################################################
 
+def sortTwoLists(actual, values):
+    if len(actual) <= 1:
+        return actual
+    else:
+        less = []
+        lessValues = []
+        greater = []
+        greaterValues = []
+        pivot = actual[0]
+        pivotValue = values[0]
+        for i in range(1, len(actual)):
+            if values[i] <= pivotValue:
+                less.append(actual[i])
+                lessValues.append(values[i])
+            else:
+                greater.append(actual[i])
+                greaterValues.append(values[i])
+        return sortTwoLists(less, lessValues) + [pivot] + sortTwoLists(greater, greaterValues)
+
+def sortPossibleMoves(state, moves, maximizingPlayer):
+    time0 = time()
+    values = []
+    for i in moves:
+        copyBoard = Board(state = copy.deepcopy(state), turn = (1 if maximizingPlayer else -1))
+        copyBoard.place(i[0], i[1])
+        values.append(evaluateStatePrime(copyBoard.state))
+    time1 = time()
+    print(time1 - time0)
+    result = sortTwoLists(moves, values)
+    if not maximizingPlayer: result.reverse()
+    return result
+
 
 def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
     if total == None:
@@ -125,9 +158,9 @@ def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
 
     if depth <= 0:
         if maximizingPlayer: #White's algorithm
-            return evaluateStatePrime(state, total), 0
+            return evaluateStatePrime(state), 0
         else: #Black's algorithm
-            return evaluateStatePrime(state, total), 0
+            return evaluateStatePrime(state), 0
     
     turn = (1 if maximizingPlayer else -1)
     Eval = -1000000 * turn
@@ -136,6 +169,10 @@ def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
     result = getValidMoves(newBoard)
     if len(result) == 0:
         return minimax(newBoard.state, depth - 1, alpha, beta, (not maximizingPlayer), total)
+    #Presorts possible moves to take advantage of alpha-beta pruning
+    #Currently makes the thing run slower, so comment out for now
+    if depth >= 3:
+        result = sortPossibleMoves(newBoard.state, result, maximizingPlayer)
     for move in result:
         copyBoard = Board(state = copy.deepcopy(newBoard.state), turn = turn)
         copyBoard.place(move[0], move[1])

@@ -7,7 +7,7 @@
 
 import random
 
-def evaluateStatePrime(state, piecesPlayed):
+def evaluateStatePrime(state):
     # State is the board of the game (2d List)
     # Pieces Played is the number of pieces that have been played on the board
         # This is not currently used in our program, but it was part of the other algorithm
