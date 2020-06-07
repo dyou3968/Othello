@@ -131,9 +131,8 @@ def sortPossibleMoves(state, moves, maximizingPlayer):
         copyBoard.place(i[0], i[1])
         values.append(evaluateStatePrime(copyBoard.state))
     time1 = time()
-    #print(time1 - time0)
     result = sortTwoLists(moves, values)
-    if not maximizingPlayer: result.reverse()
+    if not maximizingPlayer: result.reverse() #Could be backwards
     return result
 
 
@@ -168,10 +167,10 @@ def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
     newBoard = Board(state = copy.deepcopy(state), turn = turn)
     result = getValidMoves(newBoard)
     if len(result) == 0:
-        return minimax(newBoard.state, depth - 1, alpha, beta, (not maximizingPlayer), total)
+        return minimax(newBoard.state, depth - 1, alpha, beta, (not maximizingPlayer), total,)
     #Presorts possible moves to take advantage of alpha-beta pruning
     #Currently makes the thing run slower, so comment out for now
-    if depth >= 3:
+    if depth >= 5:
         result = sortPossibleMoves(newBoard.state, result, maximizingPlayer)
     for move in result:
         copyBoard = Board(state = copy.deepcopy(newBoard.state), turn = turn)
@@ -332,3 +331,9 @@ def updateScreen(aiSettings, screen, board):
 
     # Draws surrounding info
     drawInfo(aiSettings, screen, board)
+
+
+def getTime(state, sort):
+     time0 = time()
+     a = minimax(state, 4, -1000000, 1000000, True, sort = sort)
+     return time() - time0
