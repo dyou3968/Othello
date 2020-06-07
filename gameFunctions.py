@@ -131,7 +131,7 @@ def sortPossibleMoves(state, moves, maximizingPlayer):
         copyBoard.place(i[0], i[1])
         values.append(evaluateStatePrime(copyBoard.state))
     time1 = time()
-    print(time1 - time0)
+    #print(time1 - time0)
     result = sortTwoLists(moves, values)
     if not maximizingPlayer: result.reverse()
     return result
