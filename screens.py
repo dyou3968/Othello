@@ -28,20 +28,6 @@ class Screens:
 # Adapted from https://github.com/kidscancode/pygame_tutorials/blob/master/platform/part%207/main.py
 #####################################################################################
 
-
-    def wait_for_key(self):
-        # Executes a specific function when any key is pressed
-        waiting = True
-        while waiting:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    waiting = False
-                    self.running = False
-                if event.type == pygame.KEYUP:
-                    waiting = False
-                    if event.key == pygame.K_r:
-                        self.board.reset()
-
     def show_start_screen(self):
         # Othello start screen
         self.screen.fill(self.bgColor)
