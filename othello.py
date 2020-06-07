@@ -34,6 +34,7 @@ class Game:
         self.running = True
         self.makeAIMoves = False
         self.currDisp = 5
+        self.infoScroll = 0
 
 
 #####################################################################################
@@ -83,6 +84,8 @@ class Game:
         # Mouse presses when on the AI screen
         elif self.currDisp == 2:
             self.AIScreenMousePresses()
+        elif self.currDisp == 3:
+            self.infoScreenMousePresses()
 
     def gameplayMousePresses(self):
         # Updates when the game is in play
@@ -108,6 +111,9 @@ class Game:
             self.currDisp = 2
         elif (175 <= mouseX <= 425) and (455 <= mouseY <= 535):
             self.currDisp = 3
+
+    def infoScreenMousePresses(self):
+        pass
 
     def AIScreenMousePresses(self):
         mouseX,mouseY = pygame.mouse.get_pos()
