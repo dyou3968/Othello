@@ -31,9 +31,12 @@ class Game:
         # Set the background color.
         self.bgColor = (0,153,0)
 
+        # Set the current display to the start screen
+        self.currDisp = 5
+        
+        # Boolean conditions
         self.running = True
         self.makeAIMoves = False
-        self.currDisp = 5
 
 
 #####################################################################################
