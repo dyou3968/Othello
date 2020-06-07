@@ -33,7 +33,7 @@ class Game:
 
         self.running = True
         self.makeAIMoves = False
-        self.currDisp = 5
+        self.currDisp = 0
 
     def update(self):
         for event in pygame.event.get():
@@ -46,23 +46,21 @@ class Game:
                     if self.board.place(row, col):
                         updateScreen(self.aiSettings, self.screen, self.board)
             if event.type == pygame.KEYDOWN:
-                if self.currDisp == 5:
-                    self.currDisp = 0
-                elif (event.key == pygame.K_r) and (self.currDisp in (0,4)):
+                if (event.key == pygame.K_r) and (self.currDisp in (0,4)):
                     self.board.reset()
                     self.currDisp = 0
 
                 # Other screen testing
-                elif event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN:
                     self.currDisp = 0
-                elif event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT:
                     self.currDisp = 1 
-                elif event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT:
                     self.currDisp = 2
-                elif event.key == pygame.K_UP:
+                if event.key == pygame.K_UP:
                     self.currDisp = 3
 
-                elif not self.board.over:
+                if not self.board.over:
                     if event.key == pygame.K_d:
                         self.board.displayPossible = not self.board.displayPossible
                     elif event.key == pygame.K_w:
@@ -93,8 +91,6 @@ class Game:
             self.screens.show_howToPlay_screen()
         elif self.currDisp == 4:
             self.screens.show_go_screen()
-        elif self.currDisp == 5:
-            self.screens.show_start_screen()
 
         pygame.display.flip()
         self.PGclock.tick(40)
@@ -103,7 +99,6 @@ class Game:
 
 
 g = Game()
-
 while g.running:
     g.update()
 
