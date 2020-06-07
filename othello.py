@@ -83,6 +83,15 @@ class Game:
         # Mouse presses when on the AI screen
         elif self.currDisp == 2:
             self.AIScreenMousePresses()
+        # Mouse presses when on the how to play screen
+        elif self.currDisp == 3:
+            self.howToPlayMousePresses()
+
+    def howToPlayMousePresses(self):
+        # Updates when the how to play screen mouse presses
+        mouseX,mouseY = pygame.mouse.get_pos()
+        if (100 <= mouseX <= 525) and (495 <= mouseY <= 585):
+            self.currDisp = 1
 
     def gameplayMousePresses(self):
         # Updates when the game is in play
@@ -110,6 +119,7 @@ class Game:
             self.currDisp = 3
 
     def AIScreenMousePresses(self):
+        # Updates the AI screen mouse presses
         mouseX,mouseY = pygame.mouse.get_pos()
         yUpperBound, yLowerBound = 285, 345
         if (100 <= mouseX <= 200) and (yUpperBound <= mouseY <= yLowerBound):
@@ -129,7 +139,6 @@ class Game:
         elif (event.key == pygame.K_r) and (self.currDisp in (0,4)):
             self.board.reset()
             self.currDisp = 0
-
         elif not self.board.over:
             if event.key == pygame.K_d:
                 self.board.displayPossible = not self.board.displayPossible
@@ -167,14 +176,3 @@ while g.running:
 
 pygame.quit()
 os._exit(0)
-
-
-# g = Game()
-# #g.show_start_screen()
-# g.show_intro_screen()
-# while g.running:
-#     g.update()
-
-# pygame.quit()
-# os._exit(0)
-#Test
