@@ -126,6 +126,7 @@ class Game:
         renderCenteredText(self.screen, "Press r to play again", 22, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*3//4, (150,0,150))
         pygame.display.flip()
         self.wait_for_key()
+        self.currDisp = 0
 
 #####################################################################################
 # This is the intro screen where the player chooses from the following three options
