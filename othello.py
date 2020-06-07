@@ -50,6 +50,7 @@ class Game:
                     self.currDisp = 0
                 elif (event.key == pygame.K_r) and (self.currDisp in (0,4)):
                     self.board.reset()
+                    self.currDisp = 0
 
                 # Other screen testing
                 elif event.key == pygame.K_DOWN:
