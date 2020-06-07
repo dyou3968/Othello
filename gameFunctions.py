@@ -26,7 +26,7 @@ class Board(object):
             self.state[3][3] = self.state[4][4] = 1
             self.state[3][4] = self.state[4][3] = -1
         else: self.state = state
-        self.turn = turn
+        self.turn = turn         
         self.names = [0, "White", "Black"]
         self.colors = [0, (255,255,255), (0,0,0)]
         self.displayPossible = False

@@ -45,6 +45,15 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
                     self.board.reset()
+
+                # Other screen testing
+                if event.key == pygame.K_LEFT:
+                    self.show_intro_screen()
+                if event.key == pygame.K_RIGHT:
+                    self.show_AI_screen()  
+                if event.key == pygame.K_UP:
+                    self.show_howToPlay_screen()
+
                 if not self.board.over:
                     if event.key == pygame.K_d:
                         self.board.displayPossible = not self.board.displayPossible
@@ -58,7 +67,6 @@ class Game:
                         self.board.humanControlled = 2
                     elif event.key == pygame.K_a:
                         self.makeAIMoves = not self.makeAIMoves
-
         if self.makeAIMoves and not self.board.over:
             makeAIMove(self.board)
             updateScreen(self.aiSettings, self.screen, self.board)
@@ -106,10 +114,6 @@ class Game:
         pygame.display.flip()
         self.wait_for_key()
 
-
-#####################################################################################
-
-
 #####################################################################################
 # This is the intro screen where the player chooses from the following three options
 
@@ -150,21 +154,132 @@ class Game:
         howToPlayWidth = self.textSize("How to Play", fontSize)[0] + spacing
         howToPlayHeight = self.textSize("How to Play", fontSize)[1] + spacing
         self.generateTextBox(self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*8//10 + spacing//3, howToPlayWidth, howToPlayHeight, thickness)
-        #print(self.textSize("How to Play", fontSize))
         
         pygame.display.flip()
         self.wait_for_key()
-
-    def textSize(self, text, size):
-        # Returns the width and height of the text
-        font = pygame.font.Font('freesansbold.ttf', size)
-        return font.size(text)
 
     def generateText(self, startX, startY, line1, line3, spacing, font):
         # Generates the three lines of text given the input and the spacing
         renderCenteredText(self.screen, line1, font, startX, startY - spacing, (0,0,0))
         renderCenteredText(self.screen, 'Vs.', font, startX, startY, (0,0,0))
         renderCenteredText(self.screen, line3, font, startX, startY + spacing, (0,0,0))
+
+#####################################################################################
+# This is the intro screen where the player chooses from the following four options
+
+# Easy
+# Medium
+# Hard
+# Impossible
+#####################################################################################
+
+    def show_AI_screen(self):
+        self.screen.fill(self.bgColor)
+        titleFontSize = 64
+        buttonFontSize = 32
+        thickness = 2
+        startWidth = self.aiSettings.screenWidth//4
+        startHeight = self.aiSettings.screenHeight//2
+
+        # Extra spacing for design purposes
+        widthSpacing = 30 
+        heightSpacing = 30
+
+        # Title
+        renderCenteredText(self.screen, "AI Levels", titleFontSize, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*2//10, (0,0,0))
+
+        levels = ["Easy", "Medium", "Hard"]
+        for i in range(len(levels)):
+            curLevel = levels[i]
+            placement = i + 1
+            renderCenteredText(self.screen, curLevel, buttonFontSize, startWidth*placement, startHeight, (0,0,0))
+            curWidth, curHeight = self.textSize(curLevel, buttonFontSize)[0], self.textSize(curLevel, buttonFontSize)[1]
+            self.generateTextBox(startWidth*placement, startHeight + heightSpacing//2, curWidth + widthSpacing, curHeight + heightSpacing, thickness)
+
+        # Impossible
+        renderCenteredText(self.screen, "Impossible", buttonFontSize, self.aiSettings.screenWidth*2//4, self.aiSettings.screenHeight*3//4, (0,0,0))
+        impossibleWidth, impossibleHeight = self.textSize("Impossible", buttonFontSize)[0], self.textSize("Impossible", buttonFontSize)[1]
+        self.generateTextBox(self.aiSettings.screenWidth*2//4, self.aiSettings.screenHeight*3//4 + heightSpacing//2, impossibleWidth + widthSpacing, impossibleHeight + heightSpacing, thickness)
+
+        pygame.display.flip()
+        self.wait_for_key()
+
+
+#####################################################################################
+# How to Play Screen
+#####################################################################################
+
+    def show_howToPlay_screen(self):
+        """
+        Note:
+        The text does not look good nor does it fit when I try to put all 10 bullet points on the same page
+        Given the spacing as well, I believe the best approach would be to split it up, increase the spacing, and 
+        put the text for 6-10 on a second page.
+        """
+        self.screen.fill(self.bgColor)
+        titleFontSize = 64
+        buttonFontSize = 32
+        thickness = 2
+        startWidth = self.aiSettings.screenWidth//2
+        startHeight = self.aiSettings.screenHeight//5
+        
+        # Extra spacing for design purposes
+        widthSpacing = 30 
+        heightSpacing = 30
+
+        # Title
+        renderCenteredText(self.screen, "How to Play", titleFontSize, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight//20, (0,0,0))
+
+        # Description
+        # Gameplay taken from https://www.fgbradleys.com/rules/Othello.pdf
+        description = [ "1. White always goes first.", 
+                        "2. If on your turn, you cannot outflank and flip at least one opposing disc",
+                        "   your turn is forfeited and your opponent moves again. However, if a move",
+                        "   is available to you, you may not forfeit your turn.",
+                        "3. A disc may outflank any number of discs in one or more rows in any number",
+                        "   of directions at the same time – horizontally, vertically or diagonally",
+                        "4. You may not skp over your own color disc to outflank an opposing disc.",
+                        "5. Disc(s) may only be outflanked as a direct result of a move and must fall",
+                        "   in the direct line of the disc placed down.",
+                        "6. All discs outflanked in any one move must be flipped, even if it is to",
+                        "   the player's advantage not to flip them at all.",
+                        "7. A player who flips a disc which should not have been turned may correct",
+                        "   the mistake as long as the opponent has not made a subsequent move.",
+                        "   If the opponent has already moved, it is too late to change and the",
+                        "   disc(s) remain as is.",
+                        "8. Once a disc is placed on a square, it can never be moved to another",
+                        "   square later in the game.",
+                        "9. If a player runs out of discs, but still has an opportunity to",
+                        "   outflank an opposing disc on his or her turn, the opponent must give the",
+                        "   player a disc to use.",
+                        "10. When it is no longer possible for either player to move, the game is over.",
+                        "   Discs are counted and the player with the majority of his or her color",
+                        "   discs on the board is the winner."]
+
+
+        for i in range(len(description)):
+            curLevel = description[i]
+            spacing = 40 * i
+            renderCenteredText(self.screen, curLevel, int(buttonFontSize//2.1), startWidth, startHeight + spacing, (0,0,0))
+
+        # Return to Home Screen
+        renderCenteredText(self.screen, "Return to Home Screen", buttonFontSize, startWidth, self.aiSettings.screenHeight*9//10, (0,0,0))
+        impossibleWidth, impossibleHeight = self.textSize("Return to Home Screen", buttonFontSize)[0], self.textSize("Return to Home Screen", buttonFontSize)[1]
+        self.generateTextBox(startWidth, self.aiSettings.screenHeight*9//10 + heightSpacing//2, impossibleWidth + widthSpacing, impossibleHeight + heightSpacing, thickness)
+
+        pygame.display.flip()
+        self.wait_for_key()
+
+
+#####################################################################################
+# Useful helper functions for all screens
+#####################################################################################
+
+    def textSize(self, text, size):
+        # Returns the width and height of the text
+        font = pygame.font.Font('freesansbold.ttf', size)
+        return font.size(text)
+
 
     def generateTextBox(self, centerX, centerY, boxWidth, boxHeight, thickness):
         # Generates the textbox around the lines of text
@@ -179,7 +294,7 @@ class Game:
 #####################################################################################
 
 g = Game()
-g.show_intro_screen()
+
 while g.running:
     g.update()
 
