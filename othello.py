@@ -53,7 +53,7 @@ class Game:
                 if event.key == pygame.K_DOWN:
                     self.currDisp = 0
                 if event.key == pygame.K_LEFT:
-                    self.currDisp = 1
+                    self.currDisp = 1 
                 if event.key == pygame.K_RIGHT:
                     self.currDisp = 2
                 if event.key == pygame.K_UP:
@@ -72,6 +72,7 @@ class Game:
                         self.board.humanControlled = 2
                     elif event.key == pygame.K_a:
                         self.makeAIMoves = not self.makeAIMoves
+
         if self.makeAIMoves and not self.board.over:
             makeAIMove(self.board)
             updateScreen(self.aiSettings, self.screen, self.board)
@@ -79,17 +80,16 @@ class Game:
             # Shows the gameover screen
             self.currDisp = 4
             
-        
         if self.currDisp == 0:
             updateScreen(self.aiSettings, self.screen, self.board)
         elif self.currDisp == 1:
-            self.show_intro_screen()
+            self.screens.show_intro_screen()
         elif self.currDisp == 2:
-            self.show_AI_screen()  
+            self.screens.show_AI_screen()  
         elif self.currDisp == 3:
-            self.show_howToPlay_screen()
+            self.screens.show_howToPlay_screen()
         elif self.currDisp == 4:
-            self.show_go_screen()
+            self.screens.show_go_screen()
 
         pygame.display.flip()
         self.PGclock.tick(40)

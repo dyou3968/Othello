@@ -12,9 +12,7 @@ import pygame, os
 from settings import *
 from gameFunctions import *
 
-#####################################################################################
-# Adapted from https://github.com/kidscancode/pygame_tutorials/blob/master/platform/part%207/main.py
-#####################################################################################
+
 class Screens:
     def __init__(self):
         self.aiSettings = Settings()
@@ -25,6 +23,11 @@ class Screens:
         self.bgColor = (0,153,0)
 
         self.running = True
+
+#####################################################################################
+# Adapted from https://github.com/kidscancode/pygame_tutorials/blob/master/platform/part%207/main.py
+#####################################################################################
+
 
     def wait_for_key(self):
         # Executes a specific function when any key is pressed
@@ -45,7 +48,6 @@ class Screens:
         renderCenteredText(self.screen, "Othello", 48, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight//3, (0,0,0))
         renderCenteredText(self.screen, "Press any key to start", 24, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*2//3, (0,0,0))
         pygame.display.flip()
-        self.wait_for_key()
 
     def show_go_screen(self):
         # Screen when the game is over
@@ -54,7 +56,6 @@ class Screens:
         renderCenteredText(self.screen, "Game Over", 48, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight//3, (150,0,150))
         renderCenteredText(self.screen, "Press r to play again", 22, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*3//4, (150,0,150))
         pygame.display.flip()
-        self.wait_for_key()
 
 #####################################################################################
 # This is the intro screen where the player chooses from the following three options
@@ -98,7 +99,6 @@ class Screens:
         self.generateTextBox(self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*8//10 + spacing//3, howToPlayWidth, howToPlayHeight, thickness)
         
         pygame.display.flip()
-        self.wait_for_key()
 
     def generateText(self, startX, startY, line1, line3, spacing, font):
         # Generates the three lines of text given the input and the spacing
@@ -144,8 +144,6 @@ class Screens:
         self.generateTextBox(self.aiSettings.screenWidth*2//4, self.aiSettings.screenHeight*3//4 + heightSpacing//2, impossibleWidth + widthSpacing, impossibleHeight + heightSpacing, thickness)
 
         pygame.display.flip()
-        self.wait_for_key()
-
 
 #####################################################################################
 # How to Play Screen
@@ -210,7 +208,6 @@ class Screens:
         self.generateTextBox(startWidth, self.aiSettings.screenHeight*9//10 + heightSpacing//2, impossibleWidth + widthSpacing, impossibleHeight + heightSpacing, thickness)
 
         pygame.display.flip()
-        self.wait_for_key()
 
 
 #####################################################################################
