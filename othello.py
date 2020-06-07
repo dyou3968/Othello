@@ -46,7 +46,11 @@ class Game:
                     if self.board.place(row, col):
                         updateScreen(self.aiSettings, self.screen, self.board)
             if event.type == pygame.KEYDOWN:
+<<<<<<< HEAD
                 if (event.key == pygame.K_r) and (self.currDisp == 0):
+=======
+                if (event.key == pygame.K_r) and (self.currDisp in (0,4)):
+>>>>>>> parent of 7702846... Readded start screen
                     self.board.reset()
 
                 # Other screen testing
