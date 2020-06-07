@@ -50,85 +50,10 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-<<<<<<< HEAD
             if (event.type == pygame.MOUSEBUTTONDOWN):
                 self.mousePresses()
             if (event.type == pygame.KEYDOWN):
                 self.keyPresses(event)
-=======
-            
-            # Mouse presses when the game is in play
-            if (event.type == pygame.MOUSEBUTTONDOWN) and (self.currDisp == 0):
-                mouseX,mouseY = pygame.mouse.get_pos()
-                (row,col) = viewToModel(self.aiSettings,mouseX,mouseY)
-                if (row in range(8) and col in range(8)):
-                    if self.board.place(row, col):
-                        updateScreen(self.aiSettings, self.screen, self.board)
-
-            # Mouse presses when on the intro screen
-            if (event.type == pygame.MOUSEBUTTONDOWN) and (self.currDisp == 1):
-                mouseX,mouseY = pygame.mouse.get_pos()
-                yUpperBound, yLowerBound = 185, 325
-                if (30 <= mouseX <= 170) and (yUpperBound <= mouseY <= yLowerBound):
-                    self.board.humanControlled = 0 #Both human players
-
-                elif (230 <= mouseX <= 370) and (yUpperBound <= mouseY <= yLowerBound):
-                    pass
-                    # NOTE: MAKE WHITE OR BLACK SCREEN FOR HUMAN VS AI
-                    #self.currDisp = 2
-                elif (430 <= mouseX <= 570) and (yUpperBound <= mouseY <= yLowerBound):
-                    self.board.humanControlled = 2 # No human players
-                    self.currDisp = 2
-                elif (175 <= mouseX <= 425) and (455 <= mouseY <= 535):
-                    self.currDisp = 3
-        
-            # Mouse presses when on the AI screen
-            if (event.type == pygame.MOUSEBUTTONDOWN) and (self.currDisp == 2):
-                mouseX,mouseY = pygame.mouse.get_pos()
-                yUpperBound, yLowerBound = 285, 345
-                if (100 <= mouseX <= 200) and (yUpperBound <= mouseY <= yLowerBound):
-                    print("Easy")
-                elif (225 <= mouseX <= 375) and (yUpperBound <= mouseY <= yLowerBound):
-                    print("Medium")
-                elif (400 <= mouseX <= 500) and (yUpperBound <= mouseY <= yLowerBound):
-                    self.currDisp = 0
-                    self.makeAIMoves = True
-                    print("Hard")
-
-                elif (200 <= mouseX <= 400) and (435 <= mouseY <= 495):
-                    print("Impossible")
-
-            if event.type == pygame.KEYDOWN:
-                if self.currDisp == 5: # Start screen
-                    self.currDisp = 1
-                elif (event.key == pygame.K_r) and (self.currDisp in (0,4)):
-                    self.board.reset()
-                    self.currDisp = 0
-
-                # Other screen testing
-                elif event.key == pygame.K_DOWN:
-                    self.currDisp = 0 # Main game screen
-                elif event.key == pygame.K_LEFT:
-                    self.currDisp = 1 # Intro screen
-                elif event.key == pygame.K_RIGHT:
-                    self.currDisp = 2 # AI level screen
-                elif event.key == pygame.K_UP:
-                    self.currDisp = 3 # How to play screen
-
-                elif not self.board.over:
-                    if event.key == pygame.K_d:
-                        self.board.displayPossible = not self.board.displayPossible
-                    elif event.key == pygame.K_w:
-                        self.board.humanControlled = 1
-                    elif event.key == pygame.K_b:
-                        self.board.humanControlled = -1
-                    elif event.key == pygame.K_h:
-                        self.board.humanControlled = 0
-                    elif event.key == pygame.K_n:
-                        self.board.humanControlled = 2
-                    elif event.key == pygame.K_a:
-                        self.makeAIMoves = not self.makeAIMoves
->>>>>>> 2c2d7b6dbf751d82213ff2fad91fdc76a2940384
 
         if self.makeAIMoves and not self.board.over:
             makeAIMove(self.board)
