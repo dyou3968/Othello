@@ -46,8 +46,9 @@ class Game:
                     if self.board.place(row, col):
                         updateScreen(self.aiSettings, self.screen, self.board)
             if event.type == pygame.KEYDOWN:
-                if (event.key == pygame.K_r) and (self.currDisp == 0):
+                if (event.key == pygame.K_r) and (self.currDisp in (0,4)):
                     self.board.reset()
+                    self.currDisp = 0
 
                 # Other screen testing
                 if event.key == pygame.K_DOWN:
