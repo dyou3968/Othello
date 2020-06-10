@@ -36,10 +36,12 @@ class Game:
         
         # Boolean conditions
         self.running = True
-        self.makeAIMovesHard = False
         self.currDisp = 5
         self.infoScroll = 0
-
+        self.makeAIMovesEasy = False
+        self.makeAIMovesMedium = False
+        self.makeAIMovesHard = False
+        self.makeAIMovesImpossible = False
 
 #####################################################################################
 # Current Display Notes:
@@ -61,19 +63,27 @@ class Game:
             if (event.type == pygame.KEYDOWN):
                 self.keyPresses(event)
 
-        if self.makeAIMovesHard and not self.board.over:
-            makeAIMovesHard(self.board)
+        if not self.board.over: # Game still in play
+            self.AIMoves()
             updateScreen(self.aiSettings, self.screen, self.board)
-
-        if self.board.over:
-            # Shows the gameover screen
+            self.changeScreens(self.currDisp)
+        else: # Shows the gameover screen
             self.currDisp = 4
         
-        self.changeScreens(self.currDisp)
-
         pygame.display.flip()
         self.PGclock.tick(40)
 
+    def AIMoves(self):
+        if self.makeAIMovesEasy:
+            makeAIMovesEasy(self.board)        
+        elif self.makeAIMovesMedium:
+            pass
+            #makeAIMovesMedium(self.board)      
+        elif self.makeAIMovesHard:
+            makeAIMovesHard(self.board)
+        elif self.makeAIMovesImpossible:
+            pass
+            #makeAIMovesImpossible(self.board)     
 
 #####################################################################################
 # Update helper functions
@@ -133,14 +143,19 @@ class Game:
         mouseX,mouseY = pygame.mouse.get_pos()
         yUpperBound, yLowerBound = 285, 345
         if (100 <= mouseX <= 200) and (yUpperBound <= mouseY <= yLowerBound):
-            print("Easy")
+            self.currDisp = 0
+            self.makeAIMovesEasy = True
         elif (225 <= mouseX <= 375) and (yUpperBound <= mouseY <= yLowerBound):
             print("Medium")
+            #self.currDisp = 0
+            #self.makeAIMovesMedium = True
         elif (400 <= mouseX <= 500) and (yUpperBound <= mouseY <= yLowerBound):
             self.currDisp = 0
             self.makeAIMovesHard = True
         elif (200 <= mouseX <= 400) and (435 <= mouseY <= 495):
             print("Impossible")
+            #self.currDisp = 0
+            #self.makeAIMovesImpossible = True
 
     def whiteOrBlackMousePresses(self):
         mouseX,mouseY = pygame.mouse.get_pos()
@@ -180,7 +195,6 @@ class Game:
 #####################################################################################
 
 g = Game()
-#g.screens.show_AI_screen()
 while g.running:
     g.update()
 

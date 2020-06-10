@@ -7,7 +7,6 @@
 Notes:
 While is represented on the 2dlist with a value of 1
 Black is represented on the 2dlist with a value of -1
-
 """
 #####################################################################################
 
@@ -182,6 +181,38 @@ def modelToView(aiSettings,row,col):
 
 
 #####################################################################################
+# Easy Level for the AI
+
+"""
+The AI will look at all the valid moves and choose one at random
+"""
+#####################################################################################
+
+def makeAIMovesEasy(board):
+    if board.turn not in board.controlledColors[board.humanControlled]:
+        moves = getValidMoves(board) #List of tuples of coords of possible moves
+        if len(moves) == 0:
+            board.turn *= -1
+        else:
+            if board.turn == 1:
+                nextMove = random.choice(moves)
+                board.place(nextMove[0], nextMove[1])
+            else:
+                nextMove = random.choice(moves)
+                board.place(nextMove[0], nextMove[1])
+
+#####################################################################################
+# Medium Level for the AI
+
+"""
+PUT NOTES ABOUT THE MEDIUM AI HERE
+"""
+#####################################################################################
+
+def makeAIMovesMedium(board):
+    pass
+
+#####################################################################################
 # Hard Level for the AI
 
 """
@@ -266,6 +297,19 @@ def makeAIMovesHard(board):
             else:
                 nextMove = (minimax(board.state, 3, -1000000, 1000000, False))[1]
                 board.place(nextMove[0], nextMove[1])
+
+#####################################################################################
+# Impossible Level for the AI
+
+"""
+PUT NOTES ABOUT THE IMPOSSIBLE AI HERE
+"""
+#####################################################################################
+
+def makeAIMovesImpossible(board):
+    pass
+
+
 
 #####################################################################################
 # Drawing Section (View)
