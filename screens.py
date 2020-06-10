@@ -196,6 +196,44 @@ class Screens:
         pygame.display.flip()
 
 
+
+#####################################################################################
+# White Or Black Screen
+#####################################################################################
+
+    def white_or_black_screen(self):
+        self.screen.fill(self.bgColor)
+        titleFontSize = 64
+        buttonFontSize = 32
+        thickness = 2
+        startWidth = self.aiSettings.screenWidth//3
+        startHeight = self.aiSettings.screenHeight//2
+
+        # Extra spacing for design purposes
+        widthSpacing = 30 
+        heightSpacing = 30
+
+        # Title
+        renderCenteredText(self.screen, "Choose Color", titleFontSize, self.aiSettings.screenWidth//2, self.aiSettings.screenHeight*2//10, (0,0,0))   
+
+
+        # Textboxes
+        colors = ["White","Black"]
+        white = (255,255,255)
+        black = (0,0,0)
+        for i in range(len(colors)):
+            curColor = colors[i]
+            placement = i + 1
+            if i % 2 == 0:
+                color = white
+            else:
+                color = black
+            renderCenteredText(self.screen, curColor, buttonFontSize, startWidth*placement, startHeight, color)
+            curWidth, curHeight = self.textSize(curColor, buttonFontSize)[0], self.textSize(curColor, buttonFontSize)[1]
+            self.generateTextBox(startWidth*placement, startHeight + heightSpacing//2, curWidth + widthSpacing, curHeight + heightSpacing, thickness)
+
+        pygame.display.flip()
+
 #####################################################################################
 # Useful helper functions for all screens
 #####################################################################################

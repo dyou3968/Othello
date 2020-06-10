@@ -15,7 +15,7 @@ from screens import *
 
 pygame.init()
 
-class Game:
+class Game: 
     def __init__(self):
         # Initialize pygame, settings, and screen object.
         # Taken from https://github.com/ehmatthes/pcc/blob/master/chapter_14/alien_invasion.py
@@ -36,7 +36,7 @@ class Game:
         
         # Boolean conditions
         self.running = True
-        self.makeAIMoves = False
+        self.makeAIMovesHard = False
         self.currDisp = 5
         self.infoScroll = 0
 
@@ -49,6 +49,7 @@ class Game:
 # 3 = how to play screen
 # 4 = gameover screen
 # 5 = start screen
+# 6 = white or black screen
 #####################################################################################
 
     def update(self):
@@ -60,8 +61,8 @@ class Game:
             if (event.type == pygame.KEYDOWN):
                 self.keyPresses(event)
 
-        if self.makeAIMoves and not self.board.over:
-            makeAIMove(self.board)
+        if self.makeAIMovesHard and not self.board.over:
+            makeAIMovesHard(self.board)
             updateScreen(self.aiSettings, self.screen, self.board)
 
         if self.board.over:
@@ -91,6 +92,9 @@ class Game:
         # Mouse presses when on the how to play screen
         elif self.currDisp == 3:
             self.howToPlayMousePresses()
+        # Mouse presses when on the white or black screen
+        elif self.currDisp == 6:
+            self.whiteOrBlackMousePresses()
 
     def howToPlayMousePresses(self):
         # Updates when the how to play screen mouse presses
@@ -114,9 +118,7 @@ class Game:
             self.board.humanControlled = 0 #Both human players
             self.currDisp = 0
         elif (230 <= mouseX <= 370) and (yUpperBound <= mouseY <= yLowerBound):
-            pass
-            # NOTE: MAKE WHITE OR BLACK SCREEN FOR HUMAN VS AI
-            #self.currDisp = 2
+            self.currDisp = 6 # One human player, choose white or black
         elif (430 <= mouseX <= 570) and (yUpperBound <= mouseY <= yLowerBound):
             self.board.humanControlled = 2 # No human players
             self.currDisp = 2
@@ -136,10 +138,18 @@ class Game:
             print("Medium")
         elif (400 <= mouseX <= 500) and (yUpperBound <= mouseY <= yLowerBound):
             self.currDisp = 0
-            self.makeAIMoves = True
-            print("Hard")
+            self.makeAIMovesHard = True
         elif (200 <= mouseX <= 400) and (435 <= mouseY <= 495):
             print("Impossible")
+
+    def whiteOrBlackMousePresses(self):
+        mouseX,mouseY = pygame.mouse.get_pos()
+        if (140 <= mouseX <= 260) and (285 <= mouseY <= 345):
+            self.board.humanControlled = 1 # Human is white
+            self.currDisp = 2
+        elif (340 <= mouseX <= 460) and (285 <= mouseY <= 345):
+            self.board.humanControlled = -1 # Human is black
+            self.currDisp = 2
 
     def keyPresses(self, event):
         if self.currDisp == 5: # Start screen
@@ -150,16 +160,6 @@ class Game:
         elif not self.board.over:
             if event.key == pygame.K_d:
                 self.board.displayPossible = not self.board.displayPossible
-            # elif event.key == pygame.K_w:
-            #     self.board.humanControlled = 1
-            # elif event.key == pygame.K_b:
-            #     self.board.humanControlled = -1
-            # elif event.key == pygame.K_h:
-            #     self.board.humanControlled = 0
-            # elif event.key == pygame.K_n:
-            #     self.board.humanControlled = 2
-            # elif event.key == pygame.K_a:
-            #     self.makeAIMoves = not self.makeAIMoves
 
     def changeScreens(self, currDisp):
         if self.currDisp == 0:
@@ -174,11 +174,13 @@ class Game:
             self.screens.show_go_screen()
         elif self.currDisp == 5:
             self.screens.show_start_screen()
+        elif self.currDisp == 6:
+            self.screens.white_or_black_screen()
 
 #####################################################################################
 
 g = Game()
-
+#g.screens.show_AI_screen()
 while g.running:
     g.update()
 

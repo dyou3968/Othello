@@ -19,6 +19,11 @@ from stateEvaluations import *
 from stateEvaluationsPrime import *
 from time import time
 
+
+#####################################################################################
+# Attributes (Model)
+#####################################################################################
+
 class Board(object):
     def __init__(self, turn = 1, state = None):
         if state == None:
@@ -58,7 +63,6 @@ class Board(object):
             if len(moves) == 0:
                 self.over = True
                 totals = self.getDist()
-                
                 if totals[1] > totals[-1]:
                     self.whiteWins += 1
                 elif totals[1] < totals[-1]:
@@ -78,31 +82,6 @@ class Board(object):
             for col in range(8):
                 totals[self.state[row][col]] += 1
         return totals
-
-
-#####################################################################################
-#####################################################################################
-# Minimax Algorithm with Alpha Beta Pruning
-
-# Inspired by https://www.youtube.com/watch?v=l-hh51ncgDI
-
-"""
-Minimax Algorithm:
-This algorithm works by maximizing the score of one player and minimizing the score of 
-the other player. In our algorithm, we will have white try to maximize the score and black 
-minimize the score. Each position on the board has a certain "value" that we will assign it.
-When we run through the algorithm, at each turn, the pieces will check a depth of 4, meaning 
-the AI will check its move, the opposite player's move, and then repeat this process once again. 
-Once the AI has checked the number of different end states needed, it will choose the one 
-that gives it the best outcome. If two states give the same outcome, it will choose the 
-first one of the same group.
-
-Alpha Beta Pruning:
-Alpha beta pruning works by decreasing the total computation necessary for the program. 
-It removes the necessity of checking every single end state by pruning the branches we 
-know will not be checked. The video gives a good example of this process.
-"""
-#####################################################################################
 
 def sortTwoLists(actual, values):
     if len(actual) <= 1:
@@ -135,6 +114,96 @@ def sortPossibleMoves(state, moves, maximizingPlayer):
     if not maximizingPlayer: result.reverse() #Could be backwards
     return result
 
+def textSize(text, size):
+    font = pygame.font.Font('freesansbold.ttf', size)
+    return font.size(text)
+
+def renderCenteredText(screen, text, size, x, y, color):
+    font = pygame.font.Font('freesansbold.ttf', size)
+    x -= textSize(text, size)[0]//2
+    text = font.render(text, True, color)
+    screen.blit(text, (x, y))
+
+def getFlippedInDir(board, row, col, drow, dcol):
+    if not (row in range(8) and col in range(8)):
+        return None
+    #Make sure to flip tokens before placing new one
+    if board.state[row][col] == board.turn:
+        return False
+    elif board.state[row][col] == 0:
+        return None
+    result = getFlippedInDir(board, row + drow, col + dcol, drow, dcol)
+    if result == None:
+        return None
+    elif result == False:
+        return [[row, col]]
+    else:
+        result.append([row, col])
+        return result
+
+def getFlipped(board, square):
+    row,col = square
+    flipped = []
+    for drow in range(-1, 2):
+        for dcol in range(-1, 2):
+            if not (drow == dcol == 0):
+                result = getFlippedInDir(board, row + drow, col + dcol, drow, dcol)
+                if result not in [False, None]: flipped += result
+    return flipped
+
+def getValidMoves(board):
+    possibleMoves = []
+    for row in range(8):
+        for col in range(8):
+            if board.state[row][col] == 0:
+                if len(getFlipped(board, (row, col))) > 0:
+                    possibleMoves.append((row, col))
+    return possibleMoves
+
+# Adapted from https://www.cs.cmu.edu/~112/notes/notes-animations-part1.html#exampleGrids
+def checkInGrid(aiSettings,x,y):
+    """Returns true if (x,y) is inside the grid"""
+    return ((aiSettings.margin <= x <= aiSettings.screenWidth - aiSettings.margin) and
+            (aiSettings.margin <= y <= aiSettings.screenHeight - aiSettings.margin))
+
+def viewToModel(aiSettings,x,y):
+    """Returns the top left row and col of the mouse press"""
+    if not checkInGrid(aiSettings,x,y):
+        return (-1,-1)
+    row = int((y-aiSettings.margin)/aiSettings.blockSize)
+    col = int((x-aiSettings.margin)/aiSettings.blockSize)
+    return (row,col)
+
+def modelToView(aiSettings,row,col):
+    """Returns the (x,y) coordinates of the row and col"""
+    x = int(col*aiSettings.blockSize + aiSettings.margin)
+    y = int(row*aiSettings.blockSize + aiSettings.margin)
+    return (x,y)
+
+
+#####################################################################################
+# Hard Level for the AI
+
+"""
+Minimax Algorithm with Alpha Beta Pruning
+
+Inspired by https://www.youtube.com/watch?v=l-hh51ncgDI
+
+This algorithm works by maximizing the score of one player and minimizing the score of 
+the other player. In our algorithm, we will have white try to maximize the score and black 
+minimize the score. Each position on the board has a certain "value" that we will assign it.
+When we run through the algorithm, at each turn, the pieces will check a depth of 4, meaning 
+the AI will check its move, the opposite player's move, and then repeat this process once again. 
+Once the AI has checked the number of different end states needed, it will choose the one 
+that gives it the best outcome. If two states give the same outcome, it will choose the 
+first one of the same group.
+
+Alpha Beta Pruning:
+Alpha beta pruning works by decreasing the total computation necessary for the program. 
+It removes the necessity of checking every single end state by pruning the branches we 
+know will not be checked. The video gives a good example of this process.
+"""
+#####################################################################################
 
 def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
     if total == None:
@@ -185,83 +254,7 @@ def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
             break
     return (Eval, selectedMove)
 
-#####################################################################################
-
-def textSize(text, size):
-    font = pygame.font.Font('freesansbold.ttf', size)
-    return font.size(text)
-
-def renderCenteredText(screen, text, size, x, y, color):
-    font = pygame.font.Font('freesansbold.ttf', size)
-    x -= textSize(text, size)[0]//2
-    text = font.render(text, True, color)
-    screen.blit(text, (x, y))
-
-def getFlippedInDir(board, row, col, drow, dcol):
-    if not (row in range(8) and col in range(8)):
-        return None
-    #Make sure to flip tokens before placing new one
-    if board.state[row][col] == board.turn:
-        return False
-    elif board.state[row][col] == 0:
-        return None
-    result = getFlippedInDir(board, row + drow, col + dcol, drow, dcol)
-    if result == None:
-        return None
-    elif result == False:
-        return [[row, col]]
-    else:
-        result.append([row, col])
-        return result
-
-def getFlipped(board, square):
-    row,col = square
-    flipped = []
-    for drow in range(-1, 2):
-        for dcol in range(-1, 2):
-            if not (drow == dcol == 0):
-                result = getFlippedInDir(board, row + drow, col + dcol, drow, dcol)
-                if result not in [False, None]: flipped += result
-    return flipped
-
-
-def getValidMoves(board):
-    possibleMoves = []
-    for row in range(8):
-        for col in range(8):
-            if board.state[row][col] == 0:
-                if len(getFlipped(board, (row, col))) > 0:
-                    possibleMoves.append((row, col))
-    return possibleMoves
-
-# Adapted from https://www.cs.cmu.edu/~112/notes/notes-animations-part1.html#exampleGrids
-def checkInGrid(aiSettings,x,y):
-    """Returns true if (x,y) is inside the grid"""
-    return ((aiSettings.margin <= x <= aiSettings.screenWidth - aiSettings.margin) and
-            (aiSettings.margin <= y <= aiSettings.screenHeight - aiSettings.margin))
-
-def viewToModel(aiSettings,x,y):
-    """Returns the top left row and col of the mouse press"""
-    if not checkInGrid(aiSettings,x,y):
-        return (-1,-1)
-    row = int((y-aiSettings.margin)/aiSettings.blockSize)
-    col = int((x-aiSettings.margin)/aiSettings.blockSize)
-    return (row,col)
-
-def modelToView(aiSettings,row,col):
-    """Returns the (x,y) coordinates of the row and col"""
-    x = int(col*aiSettings.blockSize + aiSettings.margin)
-    y = int(row*aiSettings.blockSize + aiSettings.margin)
-    return (x,y)
-
-def drawPiece(aiSettings,screen,color,rectX,rectY):
-    """Draws each individual piece on the screen"""
-    radius = int(aiSettings.blockSize/2)
-    startX = rectX + radius
-    startY = rectY + radius
-    pygame.draw.circle(screen, color, (startX,startY), radius-2,0)
-
-def makeAIMove(board):
+def makeAIMovesHard(board):
     if board.turn not in board.controlledColors[board.humanControlled]:
         moves = getValidMoves(board)
         if len(moves) == 0:
@@ -273,6 +266,17 @@ def makeAIMove(board):
             else:
                 nextMove = (minimax(board.state, 3, -1000000, 1000000, False))[1]
                 board.place(nextMove[0], nextMove[1])
+
+#####################################################################################
+# Drawing Section (View)
+#####################################################################################
+
+def drawPiece(aiSettings,screen,color,rectX,rectY):
+    """Draws each individual piece on the screen"""
+    radius = int(aiSettings.blockSize/2)
+    startX = rectX + radius
+    startY = rectY + radius
+    pygame.draw.circle(screen, color, (startX,startY), radius-2,0)
 
 def drawGrid(aiSettings, screen, board):
     """Draws the grid for the screen"""
@@ -312,9 +316,6 @@ def drawInfo(aiSettings, screen, board):
     renderCenteredText(screen, board.names[-1] + f": {colors[-1]} tiles", 20, aiSettings.screenWidth - 100, aiSettings.screenHeight - 40, board.colors[-1])
     renderCenteredText(screen, str(board.whiteWins), 20, aiSettings.margin//2, aiSettings.screenHeight//2, (255,255,255))
     renderCenteredText(screen, str(board.blackWins), 20, aiSettings.screenWidth - aiSettings.margin//2, aiSettings.screenHeight//2, (0,0,0))
-    # if board.over:
-    #     renderCenteredText(screen, "Game Over", 40, aiSettings.screenWidth//2, aiSettings.screenHeight//2-20, (150,0,150))
-    #     renderCenteredText(screen, "Press (r) to reset", 15, aiSettings.screenWidth//2, aiSettings.screenHeight//2+25, (150,0,150))
 
 
 # From https://github.com/ehmatthes/pcc/blob/master/chapter_12/game_functions.py
