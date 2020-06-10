@@ -63,15 +63,26 @@ class Game:
             if (event.type == pygame.KEYDOWN):
                 self.keyPresses(event)
 
-        if not self.board.over: # Game still in play
-            self.AIMoves()
-            updateScreen(self.aiSettings, self.screen, self.board)
-            self.changeScreens(self.currDisp)
-        else: # Shows the gameover screen
-            self.currDisp = 4
-        
+        self.screenUpdates()
+
         pygame.display.flip()
         self.PGclock.tick(40)
+
+
+
+#####################################################################################
+# Update helper functions
+#####################################################################################
+    
+    def screenUpdates(self):
+        # Screen updates for the game
+        updateScreen(self.aiSettings, self.screen, self.board)
+        if self.board.over: # Shows the gameover screen
+            self.currDisp = 4
+            #updateScreen(self.aiSettings, self.screen, self.board)
+        else: # Game still in play
+            self.AIMoves()
+        self.changeScreens(self.currDisp)
 
     def AIMoves(self):
         if self.makeAIMovesEasy:
@@ -84,10 +95,6 @@ class Game:
         elif self.makeAIMovesImpossible:
             pass
             #makeAIMovesImpossible(self.board)     
-
-#####################################################################################
-# Update helper functions
-#####################################################################################
 
     def mousePresses(self):
         # Mouse presses when the game is in play
