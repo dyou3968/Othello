@@ -82,6 +82,16 @@ class Board(object):
                 totals[self.state[row][col]] += 1
         return totals
 
+def statePlace(state, row, col, turn):
+    possibleMoves = getValidMovesState(state, turn)
+    if (row, col) in possibleMoves:
+        for square in getFlippedState(state, (row, col), turn):
+            state[square[0]][square[1]] = turn
+        state[row][col] = turn
+        return state
+    else:
+        return False
+
 def sortTwoLists(actual, values):
     if len(actual) <= 1:
         return actual
@@ -140,6 +150,23 @@ def getFlippedInDir(board, row, col, drow, dcol):
         result.append([row, col])
         return result
 
+def getFlippedInDirState(state, row, col, drow, dcol, turn):
+    if not (row in range(8) and col in range(8)):
+        return None
+    #Make sure to flip tokens before placing new one
+    if state[row][col] == turn:
+        return False
+    elif state[row][col] == 0:
+        return None
+    result = getFlippedInDirState(state, row + drow, col + dcol, drow, dcol, turn)
+    if result == None:
+        return None
+    elif result == False:
+        return [[row, col]]
+    else:
+        result.append([row, col])
+        return result
+
 def getFlipped(board, square):
     row,col = square
     flipped = []
@@ -150,12 +177,31 @@ def getFlipped(board, square):
                 if result not in [False, None]: flipped += result
     return flipped
 
+def getFlippedState(state, square, turn):
+    row,col = square
+    flipped = []
+    for drow in range(-1, 2):
+        for dcol in range(-1, 2):
+            if not (drow == dcol == 0):
+                result = getFlippedInDirState(state, row + drow, col + dcol, drow, dcol, turn)
+                if result not in [False, None]: flipped += result
+    return flipped
+
 def getValidMoves(board):
     possibleMoves = []
     for row in range(8):
         for col in range(8):
             if board.state[row][col] == 0:
                 if len(getFlipped(board, (row, col))) > 0:
+                    possibleMoves.append((row, col))
+    return possibleMoves
+
+def getValidMovesState(state, turn):
+    possibleMoves = []
+    for row in range(8):
+        for col in range(8):
+            if state[row][col] == 0:
+                if len(getFlippedState(state, (row, col), turn)) > 0:
                     possibleMoves.append((row, col))
     return possibleMoves
 
@@ -179,6 +225,28 @@ def modelToView(aiSettings,row,col):
     y = int(row*aiSettings.blockSize + aiSettings.margin)
     return (x,y)
 
+
+class Move(object):
+    def init(self, prev, move, turn):
+        self.parent = prev
+        newState = copy.deepcopy(prev.state)
+        for square in getFlippedState(newState, move):
+            newState[square[0]][square[1]] = turn 
+        self.state = newState
+        self.move = move
+        self.alpha = None
+        self.beta = None
+        self.children = []
+        self.score = None
+    
+    def resetAlphaBeta(self):
+        self.alpha = None
+        self.beta = None
+        for child in self.children:
+            child.resetAlphaBeta()
+
+    def addChild(self, move, turn):
+        self.children.append(Move(self, move, turn))
 
 #####################################################################################
 # Easy Level for the AI
@@ -264,18 +332,17 @@ def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
     turn = (1 if maximizingPlayer else -1)
     Eval = -1000000 * turn
     selectedMove = None
-    newBoard = Board(state = copy.deepcopy(state), turn = turn)
-    result = getValidMoves(newBoard)
+    result = getValidMovesState(copy.deepcopy(state), turn)
     if len(result) == 0:
-        return minimax(newBoard.state, depth - 1, alpha, beta, (not maximizingPlayer), total,)
+        return minimax(state, depth - 1, alpha, beta, (not maximizingPlayer), total,)
     #Presorts possible moves to take advantage of alpha-beta pruning
     #Currently makes the thing run slower, so comment out for now
     if depth >= 5:
-        result = sortPossibleMoves(newBoard.state, result, maximizingPlayer)
+        result = sortPossibleMoves(state, result, maximizingPlayer)
     for move in result:
-        copyBoard = Board(state = copy.deepcopy(newBoard.state), turn = turn)
-        copyBoard.place(move[0], move[1])
-        val = minimax(copyBoard.state, depth - 1, alpha, beta, not maximizingPlayer, total = total + 1)[0]
+        copyState = copy.deepcopy(state)
+        copyState = statePlace(copyState, move[0], move[1], turn)
+        val = minimax(copyState, depth - 1, alpha, beta, not maximizingPlayer, total = total + 1)[0]
         if (maximizingPlayer and (val > Eval)) or ((not maximizingPlayer) and (val < Eval)):
             Eval = val
             selectedMove = move
