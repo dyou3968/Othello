@@ -25,7 +25,7 @@ class Game:
         self.screen = pygame.display.set_mode(
             (self.aiSettings.screenWidth, self.aiSettings.screenHeight))
         self.board = Board()
-        self.screens = Screens()
+        self.screens = Screens(self)
         pygame.display.set_caption("Othello")
 
         # Set the background color.
@@ -38,6 +38,7 @@ class Game:
         self.running = True
         self.currDisp = 5
         self.infoScroll = 0
+        self.maxInfoScroll = 220
         self.makeAIMovesEasy = False
         self.makeAIMovesMedium = False
         self.makeAIMovesHard = False
@@ -59,7 +60,7 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
             if (event.type == pygame.MOUSEBUTTONDOWN):
-                self.mousePresses()
+                self.mousePresses(event)
             if (event.type == pygame.KEYDOWN):
                 self.keyPresses(event)
 
@@ -96,7 +97,7 @@ class Game:
             pass
             #makeAIMovesImpossible(self.board)     
 
-    def mousePresses(self):
+    def mousePresses(self, event):
         # Mouse presses when the game is in play
         if self.currDisp == 0:
             self.gameplayMousePresses()
@@ -108,16 +109,21 @@ class Game:
             self.AIScreenMousePresses()
         # Mouse presses when on the how to play screen
         elif self.currDisp == 3:
-            self.howToPlayMousePresses()
+            self.howToPlayMousePresses(event)
         # Mouse presses when on the white or black screen
         elif self.currDisp == 6:
             self.whiteOrBlackMousePresses()
 
-    def howToPlayMousePresses(self):
+    def howToPlayMousePresses(self, event):
         # Updates when the how to play screen mouse presses
         mouseX,mouseY = pygame.mouse.get_pos()
         if (100 <= mouseX <= 525) and (495 <= mouseY <= 585):
             self.currDisp = 1
+        #Idea from https://stackoverflow.com/questions/24518573/pygame-scrolling-down-page
+        if event.button == 4: 
+            self.infoScroll = min(self.infoScroll + 15, 0)
+        if event.button == 5: 
+            self.infoScroll = max(self.infoScroll - 15, -self.maxInfoScroll)
 
     def gameplayMousePresses(self):
         # Updates when the game is in play
@@ -141,9 +147,6 @@ class Game:
             self.currDisp = 2
         elif (175 <= mouseX <= 425) and (455 <= mouseY <= 535):
             self.currDisp = 3
-
-    def infoScreenMousePresses(self):
-        pass
 
     def AIScreenMousePresses(self):
         # Updates the AI screen mouse presses
