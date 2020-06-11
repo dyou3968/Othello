@@ -382,3 +382,63 @@ def getTime(state, sort):
      time0 = time()
      a = minimax(state, 4, -1000000, 1000000, True, sort = sort)
      return time() - time0
+
+def renderText(screen, text, size, x, y, color):
+    font = pygame.font.Font('freesansbold.ttf', size)
+    text = font.render(text, True, color)
+    screen.blit(text, (x, y))
+
+def listText(screen, text, size, x, y, margin, color = None, w = None, h = None, scroll = 0, sameLineMargin = 3, indent = 0, formatting = None):
+    colors = [(255,255,255), (100,100,200), (50,180,50), (180,50,180)]
+    if h != None:
+        final = screen
+        intermediate = pygame.surface.Surface((w, h))
+        screen = pygame.surface.Surface((w, 10000))
+        finalY, y = y, 0
+    if color == None: color = (255,255,255)
+    if len(text) > 0:
+        vertical = textSize(text[0], size)[1]
+    else:
+        vertical = 0
+    w -= 2*x
+    line = 0
+    sameLines = 0
+    if w == None:
+        for i in range(len(text)):
+            renderText(screen, text[i], size, x, y + line*(vertical + margin), color)
+            line += 1
+    else:
+        height = margin
+        for i in range(len(text)):
+            words = text[i].split(" ")
+            first = True
+            cur = ""
+            for word in words:
+                if textSize(cur+" "+word,size)[0] > w:
+                    if formatting != None:
+                        if formatting[i][0] == 0:
+                            renderText(screen, cur, formatting[i][1], x, y + height, colors[formatting[i][2]])
+                        else:
+                            renderCenteredText(screen, cur, formatting[i][1], x + w//2, height, colors[formatting[i][2]])
+                        height += (sameLineMargin + textSize(cur, formatting[i][1])[1])
+                    else:
+                        renderText(screen, cur, size, x, y + height, color)
+                        height += (sameLineMargin + textSize(cur, size)[1])
+                    cur = word
+                else:
+                    cur = (" "*indent + word if first else cur + " " + word)
+                    first = False
+            if formatting != None:
+                if formatting[i][0] == 0:
+                    renderText(screen, cur, formatting[i][1], x, y + height, colors[formatting[i][2]])
+                else:
+                    renderCenteredText(screen, cur, formatting[i][1], x + w//2, y + height, colors[formatting[i][2]])
+                height += (margin + textSize(cur, formatting[i][1])[1])
+            else:
+                renderText(screen, cur, size, x, y + height, color)
+                height += (margin + textSize(cur, size)[1])
+    if h != None:
+        intermediate.blit(screen, (0, scroll))
+        final.blit(intermediate, (x, finalY))
+    nextText = (0 if len(text) == 0 else (margin + textSize(cur, size)[1]))
+    return height + nextText

@@ -14,7 +14,8 @@ from gameFunctions import *
 
 
 class Screens:
-    def __init__(self):
+    def __init__(self, game):
+        self.game = game
         self.aiSettings = Settings()
         self.screen = pygame.display.set_mode(
             (self.aiSettings.screenWidth, self.aiSettings.screenHeight))
@@ -159,34 +160,18 @@ class Screens:
         # Description
         # Gameplay taken from https://www.fgbradleys.com/rules/Othello.pdf
         description = [ "1. White always goes first.", 
-                        "2. If on your turn, you cannot outflank and flip at least one opposing disc",
-                        "   your turn is forfeited and your opponent moves again. However, if a move",
-                        "   is available to you, you may not forfeit your turn.",
-                        "3. A disc may outflank any number of discs in one or more rows in any number",
-                        "   of directions at the same time – horizontally, vertically or diagonally",
+                        "2. If on your turn, you cannot outflank and flip at least one opposing disc your turn is forfeited and your opponent moves again. However, if a move is available to you, you may not forfeit your turn.",
+                        "3. A disc may outflank any number of discs in one or more rows in any number of directions at the same time – horizontally, vertically or diagonally",
                         "4. You may not skp over your own color disc to outflank an opposing disc.",
-                        "5. Disc(s) may only be outflanked as a direct result of a move and must fall",
-                        "   in the direct line of the disc placed down.",
-                        "6. All discs outflanked in any one move must be flipped, even if it is to",
-                        "   the player's advantage not to flip them at all.",
-                        "7. A player who flips a disc which should not have been turned may correct",
-                        "   the mistake as long as the opponent has not made a subsequent move.",
-                        "   If the opponent has already moved, it is too late to change and the",
-                        "   disc(s) remain as is.",
-                        "8. Once a disc is placed on a square, it can never be moved to another",
-                        "   square later in the game.",
-                        "9. If a player runs out of discs, but still has an opportunity to",
-                        "   outflank an opposing disc on his or her turn, the opponent must give the",
-                        "   player a disc to use.",
-                        "10. When it is no longer possible for either player to move, the game is over.",
-                        "   Discs are counted and the player with the majority of his or her color",
-                        "   discs on the board is the winner."]
+                        "5. Disc(s) may only be outflanked as a direct result of a move and must fall in the direct line of the disc placed down.",
+                        "6. All discs outflanked in any one move must be flipped, even if it is to the player's advantage not to flip them at all.",
+                        "7. A player who flips a disc which should not have been turned may correct the mistake as long as the opponent has not made a subsequent move. If the opponent has already moved, it is too late to change and the disc(s) remain as is.",
+                        "8. Once a disc is placed on a square, it can never be moved to another square later in the game.",
+                        "9. If a player runs out of discs, but still has an opportunity to outflank an opposing disc on his or her turn, the opponent must give the player a disc to use.",
+                        "10. When it is no longer possible for either player to move, the game is over. Discs are counted and the player with the majority of his or her color discs on the board is the winner."]
 
-
-        for i in range(len(description)):
-            curLevel = description[i]
-            spacing = 40 * i
-            renderCenteredText(self.screen, curLevel, int(buttonFontSize//2.1), startWidth, startHeight + spacing, (0,0,0))
+        #screen, text, size, x, y, margin
+        listText(self.screen, description, 16, 20, 120, 10, color = None, w = 560, h = 380, scroll = self.game.infoScroll, sameLineMargin = 3, indent = 0, formatting = None)
 
         # Return to Home Screen
         renderCenteredText(self.screen, "Return to Home Screen", buttonFontSize, startWidth, self.aiSettings.screenHeight*9//10, (0,0,0))
