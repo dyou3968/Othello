@@ -225,18 +225,30 @@ def modelToView(aiSettings,row,col):
     y = int(row*aiSettings.blockSize + aiSettings.margin)
     return (x,y)
 
+class Header(object):
+    def __init__(self, node):
+        self.head = node
 
 class Move(object):
-    def init(self, prev, move, turn):
-        self.parent = prev
-        newState = copy.deepcopy(prev.state)
-        for square in getFlippedState(newState, move):
-            newState[square[0]][square[1]] = turn 
-        self.state = newState
-        self.move = move
-        self.alpha = None
-        self.beta = None
+    def __init__(self, prev, move, turn, first = False):
+        if first:
+            self.parent = None
+            self.state = [[0] * 8 for i in range(8)]
+            self.state[3][3] = self.state[4][4] = 1
+            self.state[3][4] = self.state[4][3] = -1
+            self.move = None
+            self.placed = 4
+        else:
+            self.parent = prev
+            newState = copy.deepcopy(prev.state)
+            for square in getFlippedState(newState, move, turn):
+                newState[square[0]][square[1]] = turn
+            newState[move[0]][move[1]] = turn
+            self.state = newState
+            self.move = move
+            self.placed = prev.placed + 1
         self.children = []
+        self.moves = []
         self.score = None
     
     def resetAlphaBeta(self):
@@ -246,6 +258,7 @@ class Move(object):
             child.resetAlphaBeta()
 
     def addChild(self, move, turn):
+        self.moves.append(move)
         self.children.append(Move(self, move, turn))
 
 #####################################################################################
@@ -304,18 +317,19 @@ know will not be checked. The video gives a good example of this process.
 """
 #####################################################################################
 
-def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
+def minimax(stateNode, depth, alpha, beta, maximizingPlayer, total = None):
     if total == None:
-        total = 0
-        for row in range(8):
-            for col in range(8):
-                if state[row][col] != 0: total += 1
+        total = stateNode.placed
+        stateNode.resetAlphaBeta()
+        stateNode.alpha = -1000000
+        stateNode.beta = 1000000
+    
     elif total == 64:
         # If the entire grid is filled
         white = 0
         for row in range(8):
             for col in range(8):
-                if state[row][col] == 1: white += 1
+                if stateNode.state[row][col] == 1: white += 1
         if white > 32:
             return 10000, 0
         elif white < 32:
@@ -325,45 +339,55 @@ def minimax(state, depth, alpha, beta, maximizingPlayer, total = None):
 
     if depth <= 0:
         if maximizingPlayer: #White's algorithm
-            return evaluateStatePrime(state), 0
+            return evaluateStatePrime(stateNode.state), 0
         else: #Black's algorithm
-            return evaluateStatePrime(state), 0
+            return evaluateStatePrime(stateNode.state), 0
     
     turn = (1 if maximizingPlayer else -1)
     Eval = -1000000 * turn
     selectedMove = None
-    result = getValidMovesState(copy.deepcopy(state), turn)
-    if len(result) == 0:
-        return minimax(state, depth - 1, alpha, beta, (not maximizingPlayer), total,)
+    if stateNode.children == []:
+        result = getValidMovesState(copy.deepcopy(stateNode.state), turn)
+        if len(result) == 0:
+            return minimax(stateNode, depth - 1, alpha, beta, (not maximizingPlayer), total = total)
+        for move in result:
+            stateNode.addChild(move, turn)
     #Presorts possible moves to take advantage of alpha-beta pruning
     #Currently makes the thing run slower, so comment out for now
-    if depth >= 5:
-        result = sortPossibleMoves(state, result, maximizingPlayer)
-    for move in result:
-        copyState = copy.deepcopy(state)
-        copyState = statePlace(copyState, move[0], move[1], turn)
-        val = minimax(copyState, depth - 1, alpha, beta, not maximizingPlayer, total = total + 1)[0]
+    #if depth >= 5:
+    #    result = sortPossibleMoves(state, result, maximizingPlayer)
+    for newState in stateNode.children:
+        val = minimax(newState, depth - 1, alpha, beta, not maximizingPlayer, total = total + 1)[0]
         if (maximizingPlayer and (val > Eval)) or ((not maximizingPlayer) and (val < Eval)):
             Eval = val
-            selectedMove = move
+            selectedMove = newState.move
         if turn == 1: alpha = max(val, alpha)
         else: beta = min(beta, val)
         if beta <= alpha:
             break
     return (Eval, selectedMove)
 
-def makeAIMovesHard(board):
+def makeAIMovesHard(board, tree):
+    print(123)
     if board.turn not in board.controlledColors[board.humanControlled]:
+        print(234)
         moves = getValidMoves(board)
         if len(moves) == 0:
             board.turn *= -1
+            print(345)
         else:
+            print(456)
+            print(board.turn)
             if board.turn == 1:
-                nextMove = (minimax(board.state, 3, -1000000, 1000000, True))[1]
+                nextMove = (minimax(tree.head, 3, -1000000, 1000000, True))[1]
                 board.place(nextMove[0], nextMove[1])
             else:
-                nextMove = (minimax(board.state, 3, -1000000, 1000000, False))[1]
+                nextMove = (minimax(tree.head, 3, -1000000, 1000000, False))[1]
                 board.place(nextMove[0], nextMove[1])
+            print(nextMove)
+            new = tree.head.children[tree.head.moves.index(nextMove)]
+            print(new.state)
+            tree.head = new
 
 #####################################################################################
 # Impossible Level for the AI

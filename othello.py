@@ -27,6 +27,7 @@ class Game:
         self.board = Board()
         self.screens = Screens(self)
         pygame.display.set_caption("Othello")
+        self.moveTree = Header(Move(None, None, None, first = True))
 
         # Set the background color.
         self.bgColor = (0,153,0)
@@ -92,7 +93,7 @@ class Game:
             pass
             #makeAIMovesMedium(self.board)      
         elif self.makeAIMovesHard:
-            makeAIMovesHard(self.board)
+            makeAIMovesHard(self.board, self.moveTree)
         elif self.makeAIMovesImpossible:
             pass
             #makeAIMovesImpossible(self.board)     
